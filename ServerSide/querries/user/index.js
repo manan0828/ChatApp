@@ -31,5 +31,13 @@ module.exports = {
                 "email": email
             }
         });
+    },
+    
+    async getUniqueUserByUserName(userName) {
+        return await userModel.findOne({
+            where: {
+                "userName": userName
+            }
+        });
     }
 }

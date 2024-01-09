@@ -49,4 +49,64 @@ module.exports = {
                 });
         }
     },
+
+    async login(req, res) {
+        let email = req.body.email;
+        let userName = req.body.userName;
+        let password = req.body.password;
+        let data = {
+            email: email,
+            userName: userName,
+            password: password
+        };
+        console.log(data);
+        try {
+            if(userName != null && userName != undefined && userName != '') {
+                let userExist = await userQuery.getUniqueUserByUserName(userName);
+                bcrypt.compare(password, userExist.password).then((result) => {
+                    if(result) {
+                        return res
+                            .status(200)
+                            .send({
+                                code: 200,
+                                status: "successful",
+                                data: userExist
+                            });
+                    }
+                    return res
+                        .status(400)
+                        .send({
+                            code: 400,
+                            status: "Incorrect Password"
+                    })
+                });
+            } else {
+                let userExist = await userQuery.getUniqueUser(email);
+                bcrypt.compare(password, userExist.password).then((result) => {
+                    if(result) {
+                        return res
+                            .status(200)
+                            .send({
+                                code: 200,
+                                status: "successful",
+                                data: userExist
+                            });
+                    }
+                    return res
+                        .status(400)
+                        .send({
+                            code: 400,
+                            status: "Incorrect Password"
+                        })
+                });
+            }
+        } catch (err) {
+            return res
+                .status(400)
+                .send({
+                    code: 400,
+                    status: "Incorrect Username"
+                })
+        }
+    }
 }
